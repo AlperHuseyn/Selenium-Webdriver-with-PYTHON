@@ -18,7 +18,7 @@ Whether you're looking to automate website tasks or streamline your content crea
 ## Usage:
 
 1. Configure the necessary settings by refactoring the IP, host, and password in OBS methods according to your OBS websocket connect info.
-2. Run the script: `python obs-record.py]`
+2. Run the script: `python obs-record.py`
 
 ## Contributions:
 
