@@ -88,7 +88,7 @@ class VideoAutomation():
         if curr_speed == speed:
             print(Back.GREEN + f'Video speed set to x{speed} successfully.' + '\033[39m')
         else:
-            print(Back.RED + 'Video speed was not set correctly.' + '\033[39m')
+            print(Back.YELLOW + 'Video speed was not set correctly.' + '\033[39m')
     
     def expand_video_to_fullscreen(self):
         video_id = self.get_current_video_id()
@@ -107,7 +107,7 @@ class VideoAutomation():
         if updated_size != initial_size:
             print(Back.GREEN + 'Video maximized successfully.' + '\033[39m')
         else:
-            print(Back.GREEN + 'Video was not maximized correctly.' + '\033[39m')
+            print(Back.RED + 'Video was not maximized correctly.' + '\033[39m')
             return
     
     def is_player_ended(self):
