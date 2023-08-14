@@ -19,14 +19,23 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+
+class VideoAutomation():
+    """
+   This class handles various tasks related to web automation, including logging in, navigating to videos, setting playback speed, etc.
+   """
+    WEBSITE_URL = r'https://course.csystem.org/'
+    LOGIN_EMAIL = 'your_email@example.com'  # Replace with your login email
+    LOGIN_PASSWORD = 'your_password_here'  # Replace with your login password
         
-class ObsRecorder():
-    def __init__(self, host, port, password):
-        self.driver = webdriver.Edge()  # choose a browser
+    def __init__(self):  
+        """
+        Initialize the Selenium WebDriver.
+        Note: The default web browser used here is Microsoft Edge. 
+        Modify this line as needed, to use a different web browser (e.g., Firefox, Chrome).
+        """
+        self.driver = webdriver.Edge()  #
         self.wait = WebDriverWait((self.driver), 10)
-        self.host = host
-        self.port = port
-        self.password= password
         
     def open_website(self, url):
         self.driver.get(url)
@@ -41,24 +50,30 @@ class ObsRecorder():
         elem.send_keys(text)
         
     def login(self, email, password):
-        sign_in_locator = (By.XPATH, '//a[contains(text(), "Giriş Yap")]')
+        sign_in_locator = (By.CSS_SELECTOR, 'body > header > nav > div > div > ul:nth-child(1) > li:nth-child(2) > a')
         self.click_elem(sign_in_locator)
         
-        email_locator = (By.XPATH, '//*[@id="Input_Email"]')
-        password_locator = (By.XPATH, '//*[@id="Input_Password"]')
-        submit_locator = (By.XPATH, '//*[@id="account"]/div[5]/button')
+        email_locator = (By.ID, 'Input_Email')
+        password_locator = (By.ID, 'Input_Password')
+        submit_locator = (By.CSS_SELECTOR, '#account > div:nth-child(7) > button')
         
         self.enter_text(email_locator, email)
         self.enter_text(password_locator, password)
         self.click_elem(submit_locator)
+    
+    def get_current_video_id(self):
+        current_url = self.driver.current_url
+        return current_url[current_url.rfind('/') + 1:]
         
     def get_video_password(self, video_num):
-        video_password_locator = (By.XPATH, f'/html/body/div/main/table/tbody/tr[{video_num}]/td[2]/div')
+        video_id = self.get_current_video_id()
+        video_password_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_id}) > td:nth-child(2) > div')
         video_password_elem = self.wait.until(EC.visibility_of_element_located(video_password_locator))
         return video_password_elem.text
     
     def open_video_link(self, video_num):
-        video_link_locator = (By.XPATH, f'/html/body/div/main/table/tbody/tr[{video_num}]/td[1]/a')
+        video_id = self.get_current_video_id()
+        video_link_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_id}) > td:nth-child(1) > a')
         self.click_elem(video_link_locator)
         
         # Switch to the newly opened tab
@@ -75,13 +90,9 @@ class ObsRecorder():
         else:
             print(Back.RED + 'Video speed was not set correctly.' + '\033[39m')
     
-    def get_current_video_id(self):
-        current_url = self.driver.current_url
-        return current_url[current_url.rfind('/') + 1:]
-    
     def expand_video_to_fullscreen(self):
-        id = self.get_current_video_id()
-        video_elem = self.driver.find_element(By.XPATH, f'//*[@id="{id}"]/div[4]')
+        video_id = self.get_current_video_id()
+        video_elem = self.driver.find_element(By.ID, f'{video_id}')
         
         # Get the initial size of the video element
         initial_size = video_elem.size
@@ -97,49 +108,7 @@ class ObsRecorder():
             print(Back.GREEN + 'Video maximized successfully.' + '\033[39m')
         else:
             print(Back.GREEN + 'Video was not maximized correctly.' + '\033[39m')
-            
-    def open_OBS_studio_and_record(self):
-        try:
-            print("Connecting to OBS WebSocket server...")
-            obs_ws = obsws(host=self.host, port=self.port, password=self.password)
-            obs_ws.connect()
-            
-            print(Back.GREEN + "Connected to OBS WebSocket server." + '\033[39m')
-            
-            print("Sending request to start recording...")
-            response = obs_ws.call(requests.StartRecord())
-            if response.status:    
-                print(Back.GREEN + "Recording started successfully" + '\033[39m' + ". Response:", Back.GREEN + str(response.status) + '\033[39m')
-                print("Waiting for video to finish...")
-                
-            else:
-                print(Back.RED + "Failed to start recording. Response:", str(response.status) + '\033[39m')
-            print("Disconnecting from OBS WebSocket server...")
-            obs_ws.disconnect()
-            print("Disconnected from OBS WebSocket server.")
-        except Exception as e:
-            print("Failed to start recording:", str(e))            
-            
-    def close_OBS_studio_and_stop_recording(self):
-        try:
-            print("Connecting to OBS WebSocket server...")
-            obs_ws = obsws(host=self.host, port=self.port, password=self.password)
-            obs_ws.connect()
-            
-            print(Back.GREEN + "Connected to OBS WebSocket server." + '\033[39m')
-    
-            print("Sending request to stop recording...")
-            response = obs_ws.call(requests.StopRecord())
-            if response.status:
-                print(Back.GREEN + "Recording stopped successfully" + '\033[39m' + ". Response:", Back.GREEN + str(response.status) + '\033[39m')
-            else:
-                print(Back.RED + "Failed to stop recording. Response:", str(response.status) + '\033[39m')
-    
-            print("Disconnecting from OBS WebSocket server...")
-            obs_ws.disconnect()
-            print("Disconnected from OBS WebSocket server.")
-        except Exception as e:
-            print("Failed to stop recording: ", str(e))
+            return
     
     def is_player_ended(self):
         return self.driver.execute_script("""
@@ -147,31 +116,92 @@ class ObsRecorder():
             return video.ended || (video.currentTime >= video.duration);
         """)
 
+# Define the ObsRecorder class for OBS interactions
+class ObsRecorder():
+    """
+    This class manages interactions with OBS Studio via the OBS WebSocket API.
+    """    
+    OBS_HOST = 'your_obs_host_ip'  # Replace with your OBS host IP
+    OBS_PORT = 4455
+    OBS_PASSWORD = 'your_obs_password'  # Replace with your OBS password
+    
+    def __init__(self):
+        """
+        Initializes the OBS WebSocket connection.
+        """
+        self.obs_ws = obsws(host=self.OBS_HOST, port=self.OBS_PORT, password=self.OBS_PASSWORD)
+        
+    def obs_connect(self):
+        self.obs_ws.connect()
+    
+    def obs_disconnect(self):
+        self.obs_ws.disconnect()
+        
+    def obs_record_request(self, record_request):
+        return self.obs_ws.call(record_request)
+    
+    def perform_recording_request(self, request):
+        try:
+            print("Connecting to OBS WebSocket server...")
+            self.obs_connect()
+            
+            print(Back.GREEN + "Connected to OBS WebSocket server." + '\033[39m')
+            
+            print("Sending request to start recording...")
+            response = self.obs_record_request(request)
+            if response.status:    
+                print(Back.GREEN + "Recording started successfully" + '\033[39m' + ". Response:", Back.GREEN + str(response.status) + '\033[39m')
+                print("Waiting for video to finish...")
+                
+            else:
+                print(Back.RED + "Failed to start recording. Response:", str(response.status) + '\033[39m')
+                return
+        
+        except Exception as e:
+            print("Failed to start recording:", str(e))      
+            return
+        
+        finally:
+            print("Disconnecting from OBS WebSocket server...")
+            self.obs_disconnect()
+            print("Disconnected from OBS WebSocket server.")
+    
+    def start_recording(self):
+        start_request = requests.StartRecord()
+        self.perform_recording_request(start_request)
+            
+    def stop_recording(self):
+        stop_request = requests.StopRecord()
+        self.perform_recording_request(stop_request)
+
 def main():        
-    start_video_num = 49  # Change here
-    end_video_num = 39  # change here
-    for course_num, video_num in enumerate(range(start_video_num, end_video_num - 1,  -1), start=48):
-        obs = ObsRecorder(host='xxx.xxx.x.xx', port=4455, password='xxxxxxxxxxxxxxxx')    
-        obs.open_website(r'https://example.org/')  # The website contains the video        
-        obs.login('example@xyz.com', 'xxxxxxxx')  # Login info            
-        obs.click_elem((By.XPATH, '/html/body/header/nav/div/div/ul[2]/li[2]/a'))        
-        obs.click_elem((By.XPATH, '/html/body/div/main/table/tbody/tr[2]/td[1]/a'))                
-        password = obs.get_video_password(video_num)
-        obs.open_video_link(video_num)    
-        obs.enter_text((By.XPATH, '//*[@id="password"]'), password)
-        obs.click_elem((By.XPATH, '//*[@id="pw_form"]/input[5]'))
+    start_video_num = 42
+    end_video_num = 41
+    for course_num, video_num in enumerate(range(start_video_num, end_video_num - 1,  -1), start=57):
+        video_automation = VideoAutomation()
+        video_automation.open_website(r'https://course.csystem.org/')  # The website contains the video
+        video_automation.login('alperdogan@hotmail.com', 'Alper123.')  # Login info    
+        video_automation.click_elem((By.CSS_SELECTOR, 'body > header > nav > div > div > ul.navbar-nav.flex-grow-1 > li:nth-child(2) > a'))
+        video_automation.click_elem((By.CSS_SELECTOR, 'body > div > main > table > tbody > tr:nth-child(2) > td:nth-child(1) > a'))    
+        
+        video_password = video_automation.get_video_password(video_num)
+        video_automation.open_video_link(video_num)    
+        video_automation.enter_text((By.ID, 'password'), video_password)
+        video_automation.click_elem((By.CSS_SELECTOR, '#pw_form > input.iris_btn.iris_btn--primary'))
         print('#-----------------------------------------#')
         print(f'## ders {course_num} ##')
-        obs.set_video_speed(2)        
-        obs.expand_video_to_fullscreen()
-        obs.open_OBS_studio_and_record()
+        video_automation.set_video_speed(2)        
+        video_automation.expand_video_to_fullscreen()
+        
+        obs_recorder = ObsRecorder()
+        obs_recorder.start_recording()
         
         while True:
-            if obs.is_player_ended():
-                obs.close_OBS_studio_and_stop_recording()
+            if video_automation.is_player_ended():
+                obs_recorder.stop_recording()
                 break
         
-        obs.driver.close()
+        video_automation.driver.close()
     
     print('#-----------------------------------------#')
     input('Press enter for closing the browser...')
