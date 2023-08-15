@@ -40,6 +40,3 @@ Thank you for visiting my Selenium WebDriver with Python Automation course repos
 
 Best regards,
 Alper 
-
----
-*Note: Personalize this README to match your actual repository content and experiences.*
