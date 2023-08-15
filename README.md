@@ -1,6 +1,6 @@
 # Selenium WebDriver with Python Automation Course Repository
 
-Welcome to my **Selenium WebDriver with Python Automation** course repository! This repository serves as a collection of all the work, projects, and materials I have completed during the course taught by Rahul Shetty on Udemy. Whether you're here to check out my progress, review code snippets, or understand my journey through the course, you're in the right place.
+Welcome to my **Selenium WebDriver with Python Automation** course repository! This repository serves as a collection of all the work, projects, and materials I have completed during the course taught by [Rahul Shetty on Udemy](https://www.udemy.com/course/learn-selenium-automation-in-easy-python-language/). Whether you're here to check out my progress, review code snippets, or understand my journey through the course, you're in the right place.
 
 ## Course Overview
 
