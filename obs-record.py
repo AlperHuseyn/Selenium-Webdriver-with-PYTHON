@@ -37,8 +37,8 @@ class VideoAutomation():
         self.driver = webdriver.Edge()  #
         self.wait = WebDriverWait((self.driver), 10)
         
-    def open_website(self, url):
-        self.driver.get(url)
+    def open_website(self):
+        self.driver.get(self.WEBSITE_URL)
         self.driver.maximize_window()  # Maximizes the browser window
     
     def click_elem(self, locator):
@@ -49,7 +49,7 @@ class VideoAutomation():
         elem = self.wait.until(EC.visibility_of_element_located(locator))
         elem.send_keys(text)
         
-    def login(self, email, password):
+    def login(self):
         sign_in_locator = (By.CSS_SELECTOR, 'body > header > nav > div > div > ul:nth-child(1) > li:nth-child(2) > a')
         self.click_elem(sign_in_locator)
         
@@ -57,8 +57,8 @@ class VideoAutomation():
         password_locator = (By.ID, 'Input_Password')
         submit_locator = (By.CSS_SELECTOR, '#account > div:nth-child(7) > button')
         
-        self.enter_text(email_locator, email)
-        self.enter_text(password_locator, password)
+        self.enter_text(email_locator, self.LOGIN_EMAIL)
+        self.enter_text(password_locator, self.LOGIN_PASSWORD)
         self.click_elem(submit_locator)
     
     def get_current_video_id(self):
@@ -98,8 +98,11 @@ class VideoAutomation():
         # Double click to expand the window
         actions = ActionChains((self.driver))
         actions.double_click(video_elem).perform()
+
+        # Add delay for video player to process double click action
+        sleep(1)
         
-        # Get the initial size of the video element
+        # Get the updated size of the video element
         updated_size = video_elem.size
         
         if updated_size != initial_size:
@@ -177,8 +180,8 @@ def main():
     end_video_selector_num = 41
     for course_num, video_selector_num in enumerate(range(start_video_selector_num, end_video_selector_num - 1,  -1), start=57):
         video_automation = VideoAutomation()
-        video_automation.open_website(r'https://course.csystem.org/')  # The website contains the video
-        video_automation.login('alperdogan@hotmail.com', 'Alper123.')  # Login info    
+        video_automation.open_website()
+        video_automation.login()
         video_automation.click_elem((By.CSS_SELECTOR, 'body > header > nav > div > div > ul.navbar-nav.flex-grow-1 > li:nth-child(2) > a'))
         video_automation.click_elem((By.CSS_SELECTOR, 'body > div > main > table > tbody > tr:nth-child(2) > td:nth-child(1) > a'))    
         
