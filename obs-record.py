@@ -65,13 +65,13 @@ class VideoAutomation():
         current_url = self.driver.current_url
         return current_url[current_url.rfind('/') + 1:]
         
-    def get_video_password(self, video_num):
-        video_password_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_num}) > td:nth-child(2) > div')
+    def get_video_password(self, video_selector_num):
+        video_password_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_selector_num}) > td:nth-child(2) > div')
         video_password_elem = self.wait.until(EC.visibility_of_element_located(video_password_locator))
         return video_password_elem.text
     
-    def open_video_link(self, video_num):
-        video_link_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_num}) > td:nth-child(1) > a')
+    def open_video_link(self, video_selector_num):
+        video_link_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_selector_num}) > td:nth-child(1) > a')
         self.click_elem(video_link_locator)
         
         # Switch to the newly opened tab
@@ -173,17 +173,17 @@ class ObsRecorder():
         self.perform_recording_request(stop_request)
 
 def main():        
-    start_video_num = 42
-    end_video_num = 41
-    for course_num, video_num in enumerate(range(start_video_num, end_video_num - 1,  -1), start=57):
+    start_video_selector_num = 42
+    end_video_selector_num = 41
+    for course_num, video_selector_num in enumerate(range(start_video_selector_num, end_video_selector_num - 1,  -1), start=57):
         video_automation = VideoAutomation()
         video_automation.open_website(r'https://course.csystem.org/')  # The website contains the video
         video_automation.login('alperdogan@hotmail.com', 'Alper123.')  # Login info    
         video_automation.click_elem((By.CSS_SELECTOR, 'body > header > nav > div > div > ul.navbar-nav.flex-grow-1 > li:nth-child(2) > a'))
         video_automation.click_elem((By.CSS_SELECTOR, 'body > div > main > table > tbody > tr:nth-child(2) > td:nth-child(1) > a'))    
         
-        video_password = video_automation.get_video_password(video_num)
-        video_automation.open_video_link(video_num)    
+        video_password = video_automation.get_video_password(video_selector_num)
+        video_automation.open_video_link(video_selector_num)    
         video_automation.enter_text((By.ID, 'password'), video_password)
         video_automation.click_elem((By.CSS_SELECTOR, '#pw_form > input.iris_btn.iris_btn--primary'))
         print('#-----------------------------------------#')
