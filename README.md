@@ -18,7 +18,7 @@ In this comprehensive course, I have been diving into the world of Selenium WebD
 
 Here's a breakdown of what you'll find in this repository:
 
-- **obs-record.py:** One of the practical and the first application of my learning journey is the `obs-record.py` script before taking this course. This script automates the process of recording course videos on Vimeo using Selenium WebDriver and the OBS WebSocket.
+- **obs-record.py:** The initial practical application I developed prior to enrolling in this course is the `obs-record.py` script. This script automates the process of recording course videos on Vimeo using Selenium WebDriver and the OBS WebSocket.
 
 - **Code Examples:** As I progressed through the course, I practiced various concepts by implementing code examples. These examples showcase my understanding of different topics covered in the course.
 
