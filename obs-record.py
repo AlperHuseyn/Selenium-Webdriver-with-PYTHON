@@ -66,14 +66,12 @@ class VideoAutomation():
         return current_url[current_url.rfind('/') + 1:]
         
     def get_video_password(self, video_num):
-        video_id = self.get_current_video_id()
-        video_password_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_id}) > td:nth-child(2) > div')
+        video_password_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_num}) > td:nth-child(2) > div')
         video_password_elem = self.wait.until(EC.visibility_of_element_located(video_password_locator))
         return video_password_elem.text
     
     def open_video_link(self, video_num):
-        video_id = self.get_current_video_id()
-        video_link_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_id}) > td:nth-child(1) > a')
+        video_link_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_num}) > td:nth-child(1) > a')
         self.click_elem(video_link_locator)
         
         # Switch to the newly opened tab
