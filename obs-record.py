@@ -111,6 +111,11 @@ class VideoAutomation():
             print(Back.RED + 'Video was not maximized correctly.' + '\033[39m')
             return
     
+    def get_course_title(self):
+        video_course_title_locator = (By.CSS_SELECTOR, '#main > div > main > div > div > div > div:nth-child(1) > div._11FAg > h1 > span.-KXLs')
+        video_course_title_elem = self.wait.until(EC.visibility_of_element_located(video_course_title_locator))
+        return video_course_title_elem.text
+    
     def is_player_ended(self):
         return self.driver.execute_script("""
             var video = document.querySelector("video");
@@ -176,9 +181,9 @@ class ObsRecorder():
         self.perform_recording_request(stop_request)
 
 def main():        
-    start_video_selector_num = 42
+    start_video_selector_num = 42  
     end_video_selector_num = 41
-    for course_num, video_selector_num in enumerate(range(start_video_selector_num, end_video_selector_num - 1,  -1), start=57):
+    for video_selector_num in range(start_video_selector_num, end_video_selector_num - 1,  -1):
         video_automation = VideoAutomation()
         video_automation.open_website()
         video_automation.login()
@@ -190,7 +195,7 @@ def main():
         video_automation.enter_text((By.ID, 'password'), video_password)
         video_automation.click_elem((By.CSS_SELECTOR, '#pw_form > input.iris_btn.iris_btn--primary'))
         print('#-----------------------------------------#')
-        print(f'## ders {course_num} ##')
+        print(f'Course title: {video_automation.get_course_title()}')
         video_automation.set_video_speed(2)        
         video_automation.expand_video_to_fullscreen()
         
@@ -209,5 +214,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
-    
+    main()    
