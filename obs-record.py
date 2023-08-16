@@ -18,6 +18,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from time import sleep
 
 
 class VideoAutomation():
@@ -60,11 +61,7 @@ class VideoAutomation():
         self.enter_text(email_locator, self.LOGIN_EMAIL)
         self.enter_text(password_locator, self.LOGIN_PASSWORD)
         self.click_elem(submit_locator)
-    
-    def get_current_video_id(self):
-        current_url = self.driver.current_url
-        return current_url[current_url.rfind('/') + 1:]
-        
+
     def get_video_password(self, video_selector_num):
         video_password_locator = (By.CSS_SELECTOR, f'body > div > main > table > tbody > tr:nth-child({video_selector_num}) > td:nth-child(2) > div')
         video_password_elem = self.wait.until(EC.visibility_of_element_located(video_password_locator))
@@ -76,10 +73,18 @@ class VideoAutomation():
         
         # Switch to the newly opened tab
         self.driver.switch_to.window(self.driver.window_handles[-1])
+
+    def get_course_title(self):
+        video_course_title_locator = (By.CSS_SELECTOR, '#main > div > main > div > div > div > div:nth-child(1) > div._11FAg > h1 > span.-KXLs')
+        video_course_title_elem = self.wait.until(EC.visibility_of_element_located(video_course_title_locator))
+        return video_course_title_elem.text
             
     def set_video_speed(self, speed):
         # Execute JavaScript to change video playback speed
         self.driver.execute_script(f'document.querySelector("video").playbackRate = {speed}')
+
+        sleep(1)  # Add a delay to give the video player time to process the speed change
+
         # Get the current playback speed and check if it's set correctly
         curr_speed = self.driver.execute_script('return document.querySelector("video").playbackRate')
         
@@ -87,6 +92,10 @@ class VideoAutomation():
             print(Back.GREEN + f'Video speed set to x{speed} successfully.' + '\033[39m')
         else:
             print(Back.YELLOW + 'Video speed was not set correctly.' + '\033[39m')
+    
+    def get_current_video_id(self):
+        current_url = self.driver.current_url
+        return current_url[current_url.rfind('/') + 1:]
     
     def expand_video_to_fullscreen(self):
         video_id = self.get_current_video_id()
@@ -110,11 +119,6 @@ class VideoAutomation():
         else:
             print(Back.RED + 'Video was not maximized correctly.' + '\033[39m')
             return
-    
-    def get_course_title(self):
-        video_course_title_locator = (By.CSS_SELECTOR, '#main > div > main > div > div > div > div:nth-child(1) > div._11FAg > h1 > span.-KXLs')
-        video_course_title_elem = self.wait.until(EC.visibility_of_element_located(video_course_title_locator))
-        return video_course_title_elem.text
     
     def is_player_ended(self):
         return self.driver.execute_script("""
@@ -153,18 +157,18 @@ class ObsRecorder():
             
             print(Back.GREEN + "Connected to OBS WebSocket server." + '\033[39m')
             
-            print("Sending request to start recording...")
+            print("Sending request to take necessary recording action...")
             response = self.obs_record_request(request)
             if response.status:    
-                print(Back.GREEN + "Recording started successfully" + '\033[39m' + ". Response:", Back.GREEN + str(response.status) + '\033[39m')
+                print(Back.GREEN + "SUCCESS. Response: " + str(response.status) + r'\033[39m')
                 print("Waiting for video to finish...")
                 
             else:
-                print(Back.RED + "Failed to start recording. Response:", str(response.status) + '\033[39m')
+                print(Back.RED + "Failed recording action. Response:", str(response.status) + r'\033[39m')
                 return
         
         except Exception as e:
-            print("Failed to start recording:", str(e))      
+            print(Back.RED + "Failed recording action. Response:", str(e) + r'\033[39m')      
             return
         
         finally:
