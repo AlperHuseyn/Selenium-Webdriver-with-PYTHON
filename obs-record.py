@@ -13,7 +13,8 @@ import colorama
 from colorama import Back
 colorama.init(autoreset=True)
 from obswebsocket import obsws, requests
-from selenium import webdriver 
+from selenium import webdriver
+from selenium.webdriver.edge.service import Service
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -35,7 +36,8 @@ class VideoAutomation():
         Note: The default web browser used here is Microsoft Edge. 
         Modify this line as needed, to use a different web browser (e.g., Firefox, Chrome).
         """
-        self.driver = webdriver.Edge()  #
+        self.service = Service()
+        self.driver = webdriver.Edge(service=self.service)  
         self.wait = WebDriverWait((self.driver), 10)
         
     def open_website(self):
@@ -75,9 +77,7 @@ class VideoAutomation():
         self.driver.switch_to.window(self.driver.window_handles[-1])
 
     def get_course_title(self):
-        video_course_title_locator = (By.CSS_SELECTOR, '#main > div > main > div > div > div > div:nth-child(1) > div._11FAg > h1 > span.-KXLs')
-        video_course_title_elem = self.wait.until(EC.visibility_of_element_located(video_course_title_locator))
-        return video_course_title_elem.text
+        return self.driver.title[:2]  # first two character to get course number
             
     def set_video_speed(self, speed):
         # Execute JavaScript to change video playback speed
@@ -199,7 +199,7 @@ def main():
         video_automation.enter_text((By.ID, 'password'), video_password)
         video_automation.click_elem((By.CSS_SELECTOR, '#pw_form > input.iris_btn.iris_btn--primary'))
         print('#-----------------------------------------#')
-        print(f'Course title: {video_automation.get_course_title()}')
+        print(f'Course number: {video_automation.get_course_title()}')
         video_automation.set_video_speed(2)        
         video_automation.expand_video_to_fullscreen()
         
