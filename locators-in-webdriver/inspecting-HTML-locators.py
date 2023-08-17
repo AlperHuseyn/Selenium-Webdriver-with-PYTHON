@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.select import Select
 
 
 WEBSITE_URL = r'https://rahulshettyacademy.com/angularpractice/'
@@ -20,6 +21,13 @@ driver.find_element(By.ID, 'exampleCheck1').click()
 # tagname[attribute='value'] custom CSS SELECTOR; #id; .classname
 driver.find_element(By.CSS_SELECTOR, 'input[name="name"]').send_keys(NAME)
 driver.find_element(By.CSS_SELECTOR, '#inlineRadio1').click()
+
+# Static dropdown
+drop_down = Select(driver.find_element(By.ID, 'exampleFormControlSelect1'))
+# drop_down.select_by_visible_text('Female')
+drop_down.select_by_index(0)  # Male
+# drop_down.select_by_value('male')  # if applicable
+
 # //tagname[@attribute='value'] custom XPATH
 driver.find_element(By.XPATH, '//input[@type="submit"]').click()  # Submit button
 message = driver.find_element(By.CLASS_NAME, 'alert-success').text  # Alert after submitting
