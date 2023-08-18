@@ -28,3 +28,6 @@ driver.find_element(By.CSS_SELECTOR, '.promoCode').send_keys(PROMO_CODE)
 driver.find_element(By.CSS_SELECTOR, '.promoBtn').click()
 promo_info = driver.find_element(By.CLASS_NAME, 'promoInfo').text
 assert 'applied' in promo_info
+
+# Close driver
+driver.close()
