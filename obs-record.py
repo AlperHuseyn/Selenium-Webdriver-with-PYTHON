@@ -12,10 +12,10 @@ automation solution tailored to your requirements.
 Author: Alper Huseyin DOGAN
 """
 
+from obswebsocket import obsws, requests
 import colorama
 from colorama import Back
 colorama.init(autoreset=True)
-from obswebsocket import obsws, requests
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.common.action_chains import ActionChains
@@ -69,17 +69,14 @@ class VideoAutomation():
         self.click_elem(submit_locator)
 
     def get_video_password(self, video_selector_num):
-        video_password_locator = (By.CSS_SELECTOR, f'''body > div > main >
-                                  table > tbody > 
-                                  tr:nth-child({video_selector_num}) > 
-                                  td:nth-child(2) > div''')
+        video_password_locator = (By.CSS_SELECTOR,
+        f'tbody tr:nth-child({video_selector_num}) td:nth-child(2) div')
         video_password_elem = self.wait.until(EC.visibility_of_element_located(video_password_locator))
         return video_password_elem.text
 
     def open_video_link(self, video_selector_num):
-        video_link_locator = (By.CSS_SELECTOR, f'''body > div > main > table >
-                              tbody > tr:nth-child({video_selector_num}) > 
-                              td:nth-child(1) > a''')
+        video_link_locator = (By.CSS_SELECTOR,
+            f'tbody tr:nth-child({video_selector_num}) td:nth-child(1) a')
         self.click_elem(video_link_locator)
 
         # Switch to the newly opened tab
@@ -182,7 +179,7 @@ class ObsRecorder():
 
         except Exception as e:
             print(Back.RED + "Failed recording action. Response:",
-                  str(e) + r'\033[39m')      
+                  str(e) + r'\033[39m')
             return
 
         finally:
