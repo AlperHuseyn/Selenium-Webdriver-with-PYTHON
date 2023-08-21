@@ -83,9 +83,17 @@ class VideoAutomation():
         self.driver.switch_to.window(self.driver.window_handles[-1])
 
     def get_course_title(self):
-        return self.driver.title[:2]  # first two character to get course number
+        return self.driver.title[:self.driver.title.find('_')]  # first two character to get course number
+
+    def locate_video_element(self):
+        current_url = self.driver.current_url
+        id = current_url[current_url.rfind('/') + 1:]
+        return self.driver.find_element(By.ID, f'{id}')
 
     def set_video_speed(self, speed):
+        video_elem = self.locate_video_element()
+        # Wait for the video to load and become ready for interaction
+        self.wait.until(lambda place_holder_variable: video_elem.get_attribute('currentTime') != '0')
         # Execute JavaScript to change video playback speed
         self.driver.execute_script(f'document.querySelector("video").playbackRate = {speed}')
 
@@ -100,10 +108,6 @@ class VideoAutomation():
             print(Back.GREEN + f'Video speed set to x{speed} successfully.' + '\033[39m')
         else:
             print(Back.YELLOW + 'Video speed was not set correctly.' + '\033[39m')
-
-    def get_current_video_id(self):
-        current_url = self.driver.current_url
-        return current_url[current_url.rfind('/') + 1:]
 
     def expand_video_to_fullscreen(self):
         video_id = self.get_current_video_id()
