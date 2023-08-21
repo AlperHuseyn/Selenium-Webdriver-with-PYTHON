@@ -27,11 +27,9 @@ driver.find_element(By.ID, 'username').send_keys(email)
 driver.find_element(By.NAME, 'password').send_keys('dummy_password')
 driver.find_element(By.NAME, 'signin').click()
 
-if EC.alert_is_present():
-    wait = WebDriverWait(driver, 10)
-    locator = By.CSS_SELECTOR, '.alert'
-    wait.until(EC.visibility_of_element_located((locator)))
-    print(driver.find_element(locator).text)
+wait = WebDriverWait(driver, 10)
+wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.alert')))
+print(driver.find_element(By.CSS_SELECTOR, '.alert').text)
 
 driver.close()
 
