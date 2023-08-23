@@ -18,6 +18,7 @@ from colorama import Back
 colorama.init(autoreset=True)
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -83,35 +84,39 @@ class VideoAutomation():
         self.driver.switch_to.window(self.driver.window_handles[-1])
 
     def get_course_title(self):
-        return self.driver.title[:self.driver.title.find('_')]  # first two character to get course number
+        # first two character to get course number
+        return self.driver.title[:self.driver.title.find('_')]
 
     def locate_video_element(self):
         current_url = self.driver.current_url
-        id = current_url[current_url.rfind('/') + 1:]
-        return self.driver.find_element(By.ID, f'{id}')
+        video_id = current_url[current_url.rfind('/') + 1:]
+        return self.driver.find_element(By.ID, f'{video_id}')
 
-    def set_video_speed(self, speed):
-        video_elem = self.locate_video_element()
-        # Wait for the video to load and become ready for interaction
-        self.wait.until(lambda place_holder_variable: video_elem.get_attribute('currentTime') != '0')
-        # Execute JavaScript to change video playback speed
-        self.driver.execute_script(f'document.querySelector("video").playbackRate = {speed}')
+    def set_video_speed(self, speed, max_tries=3):
+        for _ in range(max_tries):
+            try:
+                video_elem = self.locate_video_element()
+                # Wait for the video to load and become ready for interaction
+                self.wait.until(lambda place_holder_variable: video_elem.get_attribute('currentTime') != '0')
+                # Execute JavaScript to change video playback speed
+                self.driver.execute_script(f'document.querySelector("video").playbackRate = {speed}')
 
-        sleep(1)  # Add a delay to give the video player time to process the speed change
+                sleep(1)  # Add a delay to give the video player time to process the speed change
 
-        # Get the current playback speed and check if it's set correctly
-        curr_speed = self.driver.execute_script('''return document.
-                                                querySelector("video").
-                                                playbackRate''')
+                # Get the current playback speed and check if it's set correctly
+                curr_speed = self.driver.execute_script('''return document.
+                                                        querySelector("video").
+                                                        playbackRate''')
 
-        if curr_speed == speed:
-            print(Back.GREEN + f'Video speed set to x{speed} successfully.' + '\033[39m')
-        else:
-            print(Back.YELLOW + 'Video speed was not set correctly.' + '\033[39m')
+                if curr_speed == speed:
+                    print(Back.GREEN + f'Video speed set to x{speed} successfully.' + '\033[39m')
+                else:
+                    print(Back.YELLOW + 'Video speed was not set correctly.' + '\033[39m')
+            except WebDriverException as e:
+                print(Back.YELLOW + 'An error ocuucred: ' + '\033[39m', e)
 
     def expand_video_to_fullscreen(self):
-        video_id = self.get_current_video_id()
-        video_elem = self.driver.find_element(By.ID, f'{video_id}')
+        video_elem = self.locate_video_element()
 
         # Get the initial size of the video element
         initial_size = video_elem.size
