@@ -1,7 +1,5 @@
 'Import necessary modules'
-from time import sleep
 from selenium import webdriver
-from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support import expected_conditions as EC
@@ -32,4 +30,5 @@ wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.alert')))
 print(driver.find_element(By.CSS_SELECTOR, '.alert').text)
 
 driver.close()
+
 
