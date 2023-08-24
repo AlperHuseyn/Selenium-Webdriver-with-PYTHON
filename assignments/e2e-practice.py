@@ -1,5 +1,4 @@
-'Import necessary modules'
-from time import sleep 
+'Import necessary modules' 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -44,3 +43,4 @@ driver.find_element(By.CSS_SELECTOR, 'label[for="checkbox2"]').click()
 driver.find_element(By.CSS_SELECTOR, 'input[class*="btn-lg"]').click()
 
 assert 'Success' in driver.find_element(By.CSS_SELECTOR, '.alert-success').text 
+
