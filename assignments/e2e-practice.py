@@ -1,4 +1,4 @@
-'Import necessary modules' 
+'Import necessary modules'
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -28,7 +28,9 @@ for product in products:
         continue
     product.find_element(By.XPATH, 'div/button').click()
 
-# CSS_SELECTOR; //tagname[contains(@attribute, 'partial text inside attribute')], tagname[attribute*='partial text inside attribute']
+# CSS_SELECTOR;
+# //tagname[contains(@attribute, 'partial text inside attribute')],
+# tagname[attribute*='partial text inside attribute']
 driver.find_element(By.XPATH, '//a[contains(@class, "btn-primary")]').click()
 
 driver.find_element(By.CSS_SELECTOR, 'button[class*="btn-success"]').click()
@@ -42,5 +44,4 @@ driver.find_element(By.CSS_SELECTOR, 'label[for="checkbox2"]').click()
 
 driver.find_element(By.CSS_SELECTOR, 'input[class*="btn-lg"]').click()
 
-assert 'Success' in driver.find_element(By.CSS_SELECTOR, '.alert-success').text 
-
+assert 'Success' in driver.find_element(By.CSS_SELECTOR, '.alert-success').text
