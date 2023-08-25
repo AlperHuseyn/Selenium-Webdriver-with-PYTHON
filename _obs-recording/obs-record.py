@@ -12,10 +12,11 @@ automation solution tailored to your requirements.
 Author: Alper Huseyin DOGAN
 """
 
-from obswebsocket import obsws, requests
 import colorama
 from colorama import Back
 colorama.init(autoreset=True)
+import logging
+from obswebsocket import obsws, requests
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from selenium.common.exceptions import WebDriverException
@@ -25,6 +26,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from time import sleep
 
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class VideoAutomation():
     """
@@ -109,11 +114,13 @@ class VideoAutomation():
                                                         playbackRate''')
 
                 if curr_speed == speed:
-                    print(Back.GREEN + f'Video speed set to x{speed} successfully.' + '\033[39m')
+                    logger.info(Back.GREEN + f'Video speed set to x{speed} successfully.' + '\033[39m')
                 else:
-                    print(Back.YELLOW + 'Video speed was not set correctly.' + '\033[39m')
-            except WebDriverException as e:
-                print(Back.YELLOW + 'An error ocuucred: ' + '\033[39m', e)
+                    logger.warning(Back.YELLOW + 'Video speed was not set correctly.' + '\033[39m')
+            except WebDriverException:
+                logger.exception(Back.RED + 'An error ocuucred: ' + '\033[39m', exc_info=True)
+        else:
+            logger.error(Back.LIGHTRED_EX + "speed couldn't be set after all attempts." + '\033[39m')
 
     def expand_video_to_fullscreen(self):
         video_elem = self.locate_video_element()
@@ -132,9 +139,9 @@ class VideoAutomation():
         updated_size = video_elem.size
 
         if updated_size != initial_size:
-            print(Back.GREEN + 'Video maximized successfully.' + '\033[39m')
+            logger.info(Back.GREEN + 'Video maximized successfully.' + '\033[39m')
         else:
-            print(Back.RED+'Video was not maximized correctly.'+ '\033[39m')
+            logger.critical(Back.RED + 'Video was not maximized correctly.' + '\033[39m')
             return
 
     def is_player_ended(self):
@@ -169,32 +176,22 @@ class ObsRecorder():
 
     def perform_recording_request(self, request):
         try:
-            print("Connecting to OBS WebSocket server...")
             self.obs_connect()
-
-            print(Back.GREEN + "Connected to OBS WebSocket server." + '\033[39m')
-
-            print("Sending request to take necessary recording action...")
             response = self.obs_record_request(request)
             if response.status:
-                print(Back.GREEN + "SUCCESS. Response: " +
-                      str(response.status) + r'\033[39m')
-                print("Waiting for video to finish...")
+                logger.info(Back.GREEN + 'Recording action successfully processed...' + '\033[39m')
+                logger.info(Back.GREEN + "Waiting for video to finish..." + '\033[39m')
 
             else:
-                print(Back.RED + "Failed recording action. Response:",
-                      str(response.status) + r'\033[39m')
+                logger.error(Back.LIGHTRED_EX + "Failed recording action."  + r'\033[39m')
                 return
 
-        except Exception as e:
-            print(Back.RED + "Failed recording action. Response:",
-                  str(e) + r'\033[39m')
+        except Exception:
+            logger.exception(Back.RED + "Failed recording action. Response:" + '\033[39m', exc_info=True)
             return
 
         finally:
-            print("Disconnecting from OBS WebSocket server...")
             self.obs_disconnect()
-            print("Disconnected from OBS WebSocket server.")
 
     def start_recording(self):
         start_request = requests.StartRecord()
@@ -218,8 +215,8 @@ def main():
         video_automation.open_video_link(video_selector_num)
         video_automation.enter_text((By.ID, 'password'), video_password)
         video_automation.click_elem((By.CSS_SELECTOR,'input[type="submit"]'))
-        print('#-----------------------------------------#')
-        print(f'Course number: {video_automation.get_course_title()}')
+        logger.info('#-----------------------------------------#')
+        logger.info(f'Course number: {video_automation.get_course_title()}')
         video_automation.set_video_speed(2)
         video_automation.expand_video_to_fullscreen()
 
@@ -233,7 +230,7 @@ def main():
 
         video_automation.driver.close()
 
-    print('#-----------------------------------------#')
+    logger.info('#-----------------------------------------#')
     input('Press enter for closing the browser...')
 
 
