@@ -16,7 +16,7 @@ class TestE2EFramework(BaseClass):
 
         # Do the things relted to confirmation
         confirmation.enter_country()
-        confirmation.wait_for_country_to_appear()
+        self.wait_for_country_to_appear('Turkey')
         confirmation.choose_country_in_the_list().click()
         confirmation.accept_agreement().click()
         confirmation.purchase().click()
