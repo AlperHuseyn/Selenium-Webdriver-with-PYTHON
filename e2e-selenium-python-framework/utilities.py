@@ -11,7 +11,7 @@ class BaseClass:
         # Create a logger instance using the calling function's name.
         logger = logging.getLogger(logger_name)
         # Create a file handler to write logs to a file named 'logfile.log'.
-        file_handler =logging.FileHandler('logfile.log')
+        file_handler = logging.FileHandler('logfile.log')
         logger.addHandler(file_handler)
         # Define a log message format with timestamp, log level, logger name, and message.
         formatter = logging.Formatter('%(asctime)s :%(levelname)s :%(name)s :%(message)s')
