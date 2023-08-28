@@ -1,6 +1,9 @@
 import inspect
 import logging
 import pytest
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 @pytest.mark.usefixtures('setup')
@@ -20,3 +23,8 @@ class BaseClass:
         logger.setLevel(logging.INFO)
         
         return logger
+    
+    def wait_for_country_to_appear(self, text):
+        wait = WebDriverWait(self.driver, 10)  # Add a delay
+        wait.until(EC.visibility_of_element_located((By.LINK_TEXT, text)))
+        
