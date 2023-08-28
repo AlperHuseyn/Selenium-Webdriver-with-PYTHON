@@ -1,3 +1,4 @@
+from CheckoutPage import CheckoutPage
 from selenium.webdriver.common.by import By
 
 
@@ -7,5 +8,6 @@ class HomePage():
 
     shop_button_locator = (By.LINK_TEXT, 'Shop')
 
-    def shop_button(self):
-        return self.driver.find_element(*self.shop_button_locator)
+    def switch_to_checkout_page(self):
+        self.driver.find_element(*self.shop_button_locator).click()
+        return CheckoutPage(self.driver)
