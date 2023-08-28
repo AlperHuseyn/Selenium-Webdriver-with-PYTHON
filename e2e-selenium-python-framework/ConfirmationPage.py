@@ -1,6 +1,4 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 
 
 class ConfirmationPage():
@@ -16,10 +14,6 @@ class ConfirmationPage():
 
     def enter_country(self):
         return self.driver.find_element(*self.country_input_locator).send_keys(self.COUNTRY[:3])
-
-    def wait_for_country_to_appear(self):
-        wait = WebDriverWait(self.driver, 10)  # Add a delay
-        wait.until(EC.visibility_of_element_located(self.country_in_list_locator))
 
     def choose_country_in_the_list(self):
         return self.driver.find_element(*self.country_in_list_locator)
