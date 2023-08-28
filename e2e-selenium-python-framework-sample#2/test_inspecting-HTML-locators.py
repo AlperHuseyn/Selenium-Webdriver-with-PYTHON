@@ -10,20 +10,21 @@ class TestHomePage(BaseClass):
     dropdown_locator = (By.ID, 'exampleFormControlSelect1')
 
     def test_form_submission(self, get_params):
-        log = self.get_logs()
+        # Use utility method to get logger name
+        log = self.get_logs(self.get_unique_logger_name())  
         submission = HomePage(self.driver)
         submission.get_email().send_keys(get_params['email'])
-        log.info('Email sent...')
+        log.info(f'Email: {get_params["email"]}')
         submission.get_password().send_keys(get_params['password'])
-        log.info('Password sent...')
+        log.info(f'Password: {get_params["password"]}')
         submission.tick_checkbox().click()
-        log.info('Accepted agreement...')
+        log.info('Agreement accepted...')
         submission.get_name().send_keys(get_params['name'])
-        log.info('Name sent...')
+        log.info(f'Name: {get_params["name"]}')
         submission.tick_radio_button().click()
         log.info('Employment status checked...')
         self.choose_dropdown_option_by_text(self.dropdown_locator, get_params['gender'])
-        log.info('Gender chosen...')
+        log.info(f'Gender: {get_params["gender"]}')
         # //tagname[@attribute='value'] custom XPATH
         submission.submit().click()  # Submit button
         log.info('Submitted...')
