@@ -1,3 +1,4 @@
+from ConfirmationPage import ConfirmationPage
 from selenium.webdriver.common.by import By
 
 
@@ -27,4 +28,6 @@ class CheckoutPage():
         return self.driver.find_element(By.XPATH, '//a[contains(@class, "btn-primary")]')
     
     def checkout(self):
-        return self.driver.find_element(By.CSS_SELECTOR, 'button[class*="btn-success"]')
+        self.driver.find_element(By.CSS_SELECTOR, 'button[class*="btn-success"]').click()
+        return ConfirmationPage(self.driver)
+    
