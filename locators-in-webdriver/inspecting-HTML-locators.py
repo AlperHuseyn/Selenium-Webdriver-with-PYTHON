@@ -7,7 +7,7 @@ from selenium.webdriver.support.select import Select
 WEBSITE_URL = r'https://rahulshettyacademy.com/angularpractice/'
 EMAIL = 'your_email@example.com'
 PASSWORD = 'your_password_here'
-NAME = 'tour_name_here'
+NAME = 'Your_name_here'
 
 service = Service()
 driver = webdriver.Chrome(service=service)
