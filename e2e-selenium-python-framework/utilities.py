@@ -10,7 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 class BaseClass:
     def get_logs(self):
         # Get name of the calling function for contextual logging.
-        logger_name = inspect.stack[1][3]
+        logger_name = inspect.stack()[1][3]
         # Create a logger instance using the calling function's name.
         logger = logging.getLogger(logger_name)
         # Create a file handler to write logs to a file named 'logfile.log'.
