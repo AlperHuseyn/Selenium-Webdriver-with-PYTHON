@@ -1,33 +1,41 @@
-from loginPage import LoginPage
+from homePage import HomePage
+from homePageData import HomePageData
+import pytest
 from selenium.webdriver.common.by import By
 from utilities import BaseClass
 
 
-class TestInspectingHTMLLocators(BaseClass):
-    EMAIL = 'your_email@example.com'
-    PASSWORD = 'your_password_here'
-    NAME = 'your_name_here'
-    GENDER = 'Male'
-    
-    def test_inspecting_html_locators(self):
-        login = LoginPage(self.driver)
-        login.enter_email().send_keys(self.EMAIL)
-        login.enter_password().send_keys(self.PASSWORD)
-        login.tick_checkbox().click()
-
+class TestHomePage(BaseClass):
         
-        login.enter_name().send_keys(self.NAME)
-        login.tick_radio_button().click()
+    dropdown_locator = (By.ID, 'exampleFormControlSelect1')
 
-        login.choose_dropdpwn_option_by_text(self.GENDER)
-
+    def test_form_submission(self, get_params):
+        log = self.get_logs()
+        submission = HomePage(self.driver)
+        submission.get_email().send_keys(get_params['email'])
+        log.info('Email sent...')
+        submission.get_password().send_keys(get_params['password'])
+        log.info('Password sent...')
+        submission.tick_checkbox().click()
+        log.info('Accepted agreement...')
+        submission.get_name().send_keys(get_params['name'])
+        log.info('Name sent...')
+        submission.tick_radio_button().click()
+        log.info('Employment status checked...')
+        self.choose_dropdown_option_by_text(self.dropdown_locator, get_params['gender'])
+        log.info('Gender chosen...')
         # //tagname[@attribute='value'] custom XPATH
-        login.submit().click()  # Submit button
-        message = self.driver.find_element(By.CLASS_NAME, 'alert-success').text  # Alert after submitting
-        print(message)
+        submission.submit().click()  # Submit button
+        log.info('Submitted...')
+        message = submission.get_success_message().text  # Alert after submitting
 
         # Validation
         assert 'Success' in message
-
-        self.driver.find_element(By.XPATH, '(//input[@type="text"])[3]').send_keys(', middle name huseyin')
-        self.driver.find_element(By.XPATH, '(//input[@type="text"])[3]').clear()
+        
+        # Refresh page befor next run
+        self.driver.refresh()
+        log.info('Refreshed the page...')
+        
+    @pytest.fixture(params=HomePageData.test_form_submission_data)
+    def get_params(self, request):
+        return request.param
