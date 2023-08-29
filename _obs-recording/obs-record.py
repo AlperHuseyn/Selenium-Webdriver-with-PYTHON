@@ -1,12 +1,12 @@
 """
-Please note that this script serves as a demonstration and cannot be used 
-directly without modifications. It showcases techniques for automating tasks 
-such as accessing a website, logging in, interacting with elements using 
-Selenium, and controlling OBS Studio through its WebSocket plugin. To adapt 
-this script for your specific use case, carefully review and replace the 
-XPATHs, URLs, login credentials, and OBS WebSocket connection details with 
-values relevant to your target website and OBS setup. Understanding and 
-applying the concepts presented here will help you create a customized 
+Please note that this script serves as a demonstration and cannot be used
+directly without modifications. It showcases techniques for automating tasks
+such as accessing a website, logging in, interacting with elements using
+Selenium, and controlling OBS Studio through its WebSocket plugin. To adapt
+this script for your specific use case, carefully review and replace the
+XPATHs, URLs, login credentials, and OBS WebSocket connection details with
+values relevant to your target website and OBS setup. Understanding and
+applying the concepts presented here will help you create a customized
 automation solution tailored to your requirements.
 
 Author: Alper Huseyin DOGAN
@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 class VideoAutomation():
     """
-    This class handles various tasks related to web automation, including 
+    This class handles various tasks related to web automation, including
     logging in, navigating to videos, setting playback speed, etc.
     """
     WEBSITE_URL = r'https://course.csystem.org/'
@@ -43,7 +43,7 @@ class VideoAutomation():
     def __init__(self):
         """
         Initialize the Selenium WebDriver.
-        Note: The default web browser used here is Microsoft Edge. 
+        Note: The default web browser used here is Microsoft Edge.
         Modify this line as needed, to use a different web browser (e.g., Firefox, Chrome).
         """
         self.service = Service()
@@ -100,20 +100,22 @@ class VideoAutomation():
     def set_video_speed(self, speed, max_tries=3):
         for _ in range(max_tries):
             try:
+                # Get the current playback speed and check if it's set correctly
+                initial_speed = self.driver.execute_script('return document.querySelector("video").playbackRate')
+
                 video_elem = self.locate_video_element()
                 # Wait for the video to load and become ready for interaction
                 self.wait.until(lambda place_holder_variable: video_elem.get_attribute('currentTime') != '0')
                 # Execute JavaScript to change video playback speed
-                self.driver.execute_script(f'document.querySelector("video").playbackRate = {speed}')
+                self.driver.execute_script(f'''
+                    document.querySelector("video").playbackRate = {speed}
+                    ''')
 
                 sleep(1)  # Add a delay to give the video player time to process the speed change
+                # Get the updated playback speed and check if it's set correctly
+                updated_speed = self.driver.execute_script('return document.querySelector("video").playbackRate')
 
-                # Get the current playback speed and check if it's set correctly
-                curr_speed = self.driver.execute_script('''return document.
-                                                        querySelector("video").
-                                                        playbackRate''')
-
-                if curr_speed == speed:
+                if initial_speed != updated_speed:
                     logger.info(Back.GREEN + f'Video speed set to x{speed} successfully.' + '\033[39m')
                 else:
                     logger.warning(Back.YELLOW + 'Video speed was not set correctly.' + '\033[39m')
