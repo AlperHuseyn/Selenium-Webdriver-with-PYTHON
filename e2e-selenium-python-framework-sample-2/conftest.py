@@ -63,8 +63,9 @@ def pytest_runtest_makereport(item):
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_configure(config):
+    cwd = os.getcwd()
     current_datetime = datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-    report_dir = r'D:\\users\\26077239\\OneDrive - ARÇELİK A.Ş\\Documents\\GitHub\\automation-using-selenium\\Automated-Web-Recording-using-Selenium\\reports'
+    report_dir = cwd + '\\reports'
     
     if not os.path.exists(report_dir):
         os.makedirs(report_dir)
