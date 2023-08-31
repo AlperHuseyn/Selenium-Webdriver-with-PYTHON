@@ -5,12 +5,18 @@ from selenium import webdriver
 driver = None
 
 
-WEBSITE_URL = r'https://rahulshettyacademy.com/angularpractice/'
+DEV = r'https://rahulshettyacademy.com/angularpractice/'
+# PROD = r'https://rahulshettyacademy.com/angularpractice/'  
 
 def pytest_addoption(parser):
     parser.addoption(
         '--browser-name', action='store', default='edge'
-        )
+    )  
+     
+    parser.addoption(
+        '--url', action='store', default='dev'
+    )
+    
 
 @pytest.fixture(scope='class')
 def setup(request):
@@ -28,8 +34,17 @@ def setup(request):
         driver = webdriver.Edge(service=service)
 
     # Other browsers can be added as well.
+    
+    url = request.config.getoption('--url')
+    assert url in ['dev', 'prod']
 
-    driver.get(WEBSITE_URL)
+    if url == 'dev':
+        driver.get(DEV)
+    
+    elif url == 'prod':
+        driver.get(PROD)
+    
+    # driver.get(DEV)
     driver.maximize_window()
     request.cls.driver = driver
     yield
