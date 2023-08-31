@@ -17,6 +17,7 @@ def setup(request):
     global driver
 
     browser_name = request.config.getoption('--browser-name')
+    assert browser_name in ['chrome', 'edge']
 
     if browser_name == 'chrome':
         service = webdriver.ChromeService()
